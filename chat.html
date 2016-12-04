@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <body>
+    <p id = "returnField">Chat</p>
+    <form id = "textfield">
+      <textarea id = "mainText" placeholder = "Enter text here..."></textarea>
+    </form>
+    <button id = "sendBtn" onclick="sendClick()">send</button>
+  </body>
+<script src="https://www.gstatic.com/firebasejs/3.6.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCAwawwT34ytgXyy5F6KDAKMVErYYlBqYM",
+    authDomain: "chatapp-7fa59.firebaseapp.com",
+    databaseURL: "https://chatapp-7fa59.firebaseio.com",
+    storageBucket: "chatapp-7fa59.appspot.com",
+    messagingSenderId: "805518429060"
+  };
+  firebase.initializeApp(config);
+</script>
+<script src="index.js"></script>
+</html>
