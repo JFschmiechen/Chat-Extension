@@ -10,11 +10,13 @@ function sendClick() {
   firebaseRef = firebase.database().ref('messageLog');
 
   var messageText = mainText.value;
-    firebaseRef.push({messageText,
+    firebaseRef.child(totalMsg).set({messageText,
 	timeStamp,
 	count
 	});
-  firebaseRef.orderByChild('timeStamp');l
+  if (totalMsg >= 3) {
+    fieldRef.child(totalMsg - count).remove();
+  }
 }
 
 fieldRef.on('child_added', function(textSnap, id) {
@@ -25,6 +27,7 @@ fieldRef.on('child_added', function(textSnap, id) {
    div.textContent = textSnap.val().messageText;
    count++;
    totalMsg++;
+
 });
 
 fieldRef.on('child_removed', function(textSnap, id) {
@@ -32,17 +35,4 @@ fieldRef.on('child_removed', function(textSnap, id) {
   id = chatArea.firstChild.key;
   chatArea.removeChild(chatArea.firstChild);
   count--;
-});
-
-  fieldRef.on('value', function(parentSnap) {
-    parentSnap.forEach(function(childSnap) {
-    var childBirth = childSnap.val().timeStamp;
-    var childKey = childSnap.key;
-    alert("before if");
-    if (true) {
-      alert("after if");
-      childSnap.ref().set(null);
-      alert("done");
-    }
-  });
 });
