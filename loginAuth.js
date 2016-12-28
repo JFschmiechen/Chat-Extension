@@ -11,11 +11,17 @@ const joinBtn = document.getElementById('joinRm');
 const rmService = document.getElementById('roomService');
 const rmName = document.getElementById('rmName');
 const rmPass = document.getElementById('rmPass');
+const rmNameJoin = document.getElementById('rmNameJoin');
+const rmPassJoin = document.getElementById('rmPassJoin')
+const finalizeJoin = document.getElementById('finalizeJoin');
+const backToRmSJ = document.getElementById('backToRmSJ');
 const finalizeRmBtn = document.getElementById('finalizeRm');
 const createRmForm = document.getElementById('createForm');
 const backToRmS = document.getElementById('backToRmS');
 const db = firebase.database().ref();
 var name;
+var joinName;
+var joinPass;
 
 // Login
 
@@ -53,6 +59,7 @@ btnLogout.addEventListener('click', e => {
 logOutInner.addEventListener('click', e => {
   firebase.auth().signOut();
 })
+
 // Auth state change
 
 firebase.auth().onAuthStateChanged(firebaseUser => {
@@ -95,5 +102,34 @@ if (finalizeRmBtn) {
     db.child(name).set(pass);
     container.removeAttribute('hidden');
     createRmForm.setAttribute('hidden', 'createRmForm');
+    chatArea.innerHTML = "";
   })
 }
+
+// Join room
+if (joinRm) {
+  joinRm.addEventListener('click', e => {
+    joinForm.removeAttribute('hidden');
+    rmService.setAttribute('hidden', 'rmService');
+  })
+}
+
+if (finalizeJoin) {
+  finalizeJoin.addEventListener('click', e => {
+    joinName = rmNameJoin.value;
+    joinPass = rmPassJoin.value;
+
+    roomToJoin = db.child(joinName).ref();
+
+    if (roomToJoin.val() == joinPass) {
+      db.once('value')
+        .then(function(snapshot) {
+          snapshot.forEach(function(childSnap) {
+            var p = document.createElement('p');
+            chatArea.appendChild('p');
+            p.textContent = childSnap.val().messageText;
+          })
+        })
+      }
+    })
+  }

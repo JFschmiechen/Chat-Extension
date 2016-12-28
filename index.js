@@ -9,7 +9,7 @@ firebase.initializeApp(config);
 const mainText = document.getElementById("mainText");
 const returnField = document.getElementById("returnField");
 const sendBtn = document.getElementById('sendBtn');
-const fieldRef = firebase.database().ref(name);
+var fieldRef = firebase.database().ref(name);
 
 var userEmail;
 var timeStamp = firebase.database.ServerValue.TIMESTAMP;
@@ -24,7 +24,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 sendBtn.onclick = function(){sendClick()};
 function sendClick() {
-  firebaseRef = firebase.database().ref(name);
+var firebaseRef = firebase.database().ref(name);
 
   var messageText = mainText.value;
     firebaseRef.child(totalMsg).set({messageText,
@@ -34,7 +34,7 @@ function sendClick() {
     totalMsg++;
     count++;
   if (totalMsg >= 3) {
-    fieldRef.child(totalMsg - count).remove();
+    firebaseRef.child(totalMsg - count).remove();
     count--;
   }
 }
@@ -44,8 +44,6 @@ fieldRef.on('child_added', function(textSnap, id) {
    var div = document.createElement('p'); // creates new p tag in chatbox
    chatArea.appendChild(div);
    div.textContent = userEmail + ": " + textSnap.val().messageText;
-
-
 });
 
 fieldRef.on('child_removed', function(textSnap, id) {
