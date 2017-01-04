@@ -1,43 +1,44 @@
-
 const email = document.getElementById('emailField');
 const pass = document.getElementById('passField');
-const btnLogin = document.getElementById('login');
-const btnSignUp = document.getElementById('signUp');
-const btnLogout = document.getElementById('logOut');
+const buttonLogin = document.getElementById('login');
+const buttonSignUp = document.getElementById('signUp');
+const buttonLogout = document.getElementById('logOut');
 const logOutInner = document.getElementById('logOutInner');
 const invalidText = document.getElementById('invalidEmail');
-const createBtn = document.getElementById('createRm');
-const joinBtn = document.getElementById('joinRm');
-const rmService = document.getElementById('roomService');
-const rmName = document.getElementById('rmName');
-const rmPass = document.getElementById('rmPass');
-const rmNameJoin = document.getElementById('rmNameJoin');
-const rmPassJoin = document.getElementById('rmPassJoin')
+const createButton = document.getElementById('createRoom');
+const joinButton = document.getElementById('joinRoom');
+const roomService = document.getElementById('roomService');
+const roomName = document.getElementById('roomName');
+const roomPass = document.getElementById('roomPass');
+const roomNameJoin = document.getElementById('roomNameJoin');
+const roomPassJoin = document.getElementById('roomPassJoin')
 const finalizeJoin = document.getElementById('finalizeJoin');
-const backToRmSJ = document.getElementById('backToRmSJ');
-const finalizeRmBtn = document.getElementById('finalizeRm');
-const createRmForm = document.getElementById('createForm');
-const backToRmS = document.getElementById('backToRmS');
+const backToRoomServiceJoin = document.getElementById('backToRoomServiceJoin');
+const finalizeRoomButton = document.getElementById('finalizeRoom');
+const createRoomForm = document.getElementById('createForm');
+const backToRoomService = document.getElementById('backToRoomService');
 const db = firebase.database().ref();
-var name;
+
+var name = "default";
 var joinName;
 var joinPass;
 
 // Login
 
-btnLogin.addEventListener('click', e => {
+buttonLogin.addEventListener('click', function(e) {
   const emailVal = email.value;
   const passVal = pass.value;
   const auth = firebase.auth();
 
   const promise = auth.signInWithEmailAndPassword(emailVal, passVal);
-
-  promise.catch(e => console.log(e.message));
+  promise.catch(function(e) {
+    console.log(e.message);
+  });
 });
 
 // sign up
 
-btnSignUp.addEventListener('click', e => {
+buttonSignUp.addEventListener('click', function(e) {
   const emailVal = email.value;
   const passVal = pass.value;
   const auth = firebase.auth();
@@ -47,32 +48,34 @@ btnSignUp.addEventListener('click', e => {
     invalidText.removeAttribute('hidden');
   }
 
-  promise.catch(e => console.log(e.message));
+  promise.catch(function(e) {
+    console.log(e.message);
+  });
 });
 
 // Log out
 
-btnLogout.addEventListener('click', e => {
+buttonLogout.addEventListener('click', function(e) {
   firebase.auth().signOut();
 });
 
-logOutInner.addEventListener('click', e => {
+logOutInner.addEventListener('click', function(e) {
   firebase.auth().signOut();
 })
 
 // Auth state change
 
-firebase.auth().onAuthStateChanged(firebaseUser => {
+firebase.auth().onAuthStateChanged(function(firebaseUser) {
   if (firebaseUser) {
     console.log(firebaseUser);
-    rmService.removeAttribute('hidden');
-    btnLogout.removeAttribute('hidden');
+    roomService.removeAttribute('hidden');
+    buttonLogout.removeAttribute('hidden');
     loginForm.setAttribute('hidden', 'loginForm');
     invalidText.setAttribute('hidden', 'invalidText');
   } else {
     console.log("logged out");
-    rmService.setAttribute('hidden', 'rmService');
-    btnLogout.setAttribute('hidden', 'btnLogout');
+    roomService.setAttribute('hidden', 'roomService');
+    buttonLogout.setAttribute('hidden', 'buttonLogout');
     container.setAttribute('hidden', 'container');
     loginForm.removeAttribute('hidden');
   }
@@ -80,56 +83,65 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 
 // Back to menu
 
-if (backToRmS) {
-  backToRmS.addEventListener('click', e => {
-    rmService.removeAttribute('hidden');
-    createRmForm.setAttribute('hidden', 'createRmForm');
+if (backToRoomService) {
+  backToRoomService.addEventListener('click', function(e) {
+    roomService.removeAttribute('hidden');
+    createRoomForm.setAttribute('hidden', 'createRoomForm');
   })
 }
+
 // Create room
 
-if (createBtn) {
-  createBtn.addEventListener('click', e => {
-    createRmForm.removeAttribute('hidden');
-    rmService.setAttribute('hidden', 'rmService');
+if (createButton) {
+  createButton.addEventListener('click', function(e) {
+    createRoomForm.removeAttribute('hidden');
+    roomService.setAttribute('hidden', 'roomService');
   })
 }
 
-if (finalizeRmBtn) {
-  finalizeRmBtn.addEventListener('click', e => {
-    name = rmName.value;
-    var pass = rmPass.value;
-    db.child(name).set(pass);
+if (finalizeRoomButton) {
+  finalizeRoomButton.addEventListener('click', function(e) {
+    name = roomName.value;
+    var pass = roomPass.value;
+    passList = db.child('passwords');
+    passList.child(name).set(pass);
     container.removeAttribute('hidden');
-    createRmForm.setAttribute('hidden', 'createRmForm');
+    createRoomForm.setAttribute('hidden', 'createRoomForm');
     chatArea.innerHTML = "";
   })
 }
 
 // Join room
-if (joinRm) {
-  joinRm.addEventListener('click', e => {
+
+if (joinRoom) {
+  joinRoom.addEventListener('click', function(e) {
     joinForm.removeAttribute('hidden');
-    rmService.setAttribute('hidden', 'rmService');
+    roomService.setAttribute('hidden', 'roomService');
   })
 }
 
 if (finalizeJoin) {
-  finalizeJoin.addEventListener('click', e => {
-    joinName = rmNameJoin.value;
-    joinPass = rmPassJoin.value;
+  finalizeJoin.addEventListener('click', function(e) {
+    joinName = roomNameJoin.value;
+    joinPass = roomPassJoin.value;
 
-    roomToJoin = db.child(joinName).ref();
-
-    if (roomToJoin.val() == joinPass) {
-      db.once('value')
-        .then(function(snapshot) {
-          snapshot.forEach(function(childSnap) {
-            var p = document.createElement('p');
-            chatArea.appendChild('p');
-            p.textContent = childSnap.val().messageText;
-          })
-        })
+    roomToJoin = firebase.database().ref('passwords');
+    roomToJoin.on("value", function(snapShot) {
+    console.log(snapShot.child(joinName).val());
+    
+      if (snapShot.child(joinName).val() == joinPass) {
+        alert('after if');
+        roomToJoin.on('value', function(snapshot) {
+            snapshot.forEach(function(childSnap) {
+              var p = document.createElement('p');
+              chatArea.appendChild(p);
+              p.textContent = childSnap.val().messageText;
+            });
+          });
+        container.removeAttribute('hidden');
+        joinForm.setAttribute('hidden', 'joinForm');
+	alert('done');
       }
-    })
-  }
+    });
+  })
+}

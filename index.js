@@ -8,8 +8,9 @@ var config = {
 firebase.initializeApp(config);
 const mainText = document.getElementById("mainText");
 const returnField = document.getElementById("returnField");
-const sendBtn = document.getElementById('sendBtn');
+const sendButton = document.getElementById('sendButton');
 var fieldRef = firebase.database().ref(name);
+
 
 var userEmail;
 var timeStamp = firebase.database.ServerValue.TIMESTAMP;
@@ -22,7 +23,7 @@ firebase.auth().onAuthStateChanged(function(user) {
   }
 })
 
-sendBtn.onclick = function(){sendClick()};
+sendButton.onclick = function(){sendClick()};
 function sendClick() {
 var firebaseRef = firebase.database().ref(name);
 
