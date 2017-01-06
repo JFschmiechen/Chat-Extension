@@ -71,7 +71,7 @@ displayFinalize.addEventListener('click', function(e) {
   loginForm.setAttribute('hidden', 'loginForm');
   invalidText.setAttribute('hidden', 'invalidText');
   displayNameForm.setAttribute('hidden', 'displayNameForm');
-  console.log(firebase.auth().currentUser);
+
 })
 
 displayCancel.addEventListener('click', function(e) {

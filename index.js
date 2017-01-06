@@ -14,7 +14,7 @@ var fieldRef = firebase.database().ref(name);
 
 var userEmail;
 var timeStamp = firebase.database.ServerValue.TIMESTAMP;
-var count = 0;
+var count = Object.keys(fieldRef).length;
 var totalMsg = 0;
 
 firebase.auth().onAuthStateChanged(function(user) {
@@ -24,8 +24,7 @@ firebase.auth().onAuthStateChanged(function(user) {
   }
 })
 
-sendButton.onclick = function(){sendClick()};
-function sendClick() {
+sendButton.onclick = function() {
 var firebaseRef = firebase.database().ref(name);
 
   var messageText = mainText.value;
@@ -34,16 +33,25 @@ var firebaseRef = firebase.database().ref(name);
       count
   	});
     totalMsg++;
-    count++;
-  if (totalMsg >= 3) {
-    firebaseRef.child(totalMsg - count).remove();
-    count--;
+    count = Object.keys(firebaseRef).length;
+  if (count >= 3) {
+    query = firebase.database().ref(name).orderByChild('timeStamp');
+    query.once('value')
+      .then(function(snapshot) {
+      console.log(snapshot);
+      snapshot.forEach(function(childSnapshot) {
+        console.log(childSnapshot);
+        firebaseRef.child(childSnapshot).remove();
+        return true;
+      });
+    });
   }
 }
 
 fieldRef.on('child_added', function(textSnap, id) {
    var div = document.createElement('p'); // creates new p tag in chatbox
    chatArea.appendChild(div);
+   console.log(textSnap);
    div.textContent = userEmail + ": " + textSnap.val().messageText;
 });
 
