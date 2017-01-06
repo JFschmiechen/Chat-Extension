@@ -11,17 +11,22 @@ const roomService = document.getElementById('roomService');
 const roomName = document.getElementById('roomName');
 const roomPass = document.getElementById('roomPass');
 const roomNameJoin = document.getElementById('roomNameJoin');
-const roomPassJoin = document.getElementById('roomPassJoin')
+const roomPassJoin = document.getElementById('roomPassJoin');
 const finalizeJoin = document.getElementById('finalizeJoin');
 const backToRoomServiceJoin = document.getElementById('backToRoomServiceJoin');
 const finalizeRoomButton = document.getElementById('finalizeRoom');
 const createRoomForm = document.getElementById('createForm');
 const backToRoomService = document.getElementById('backToRoomService');
+const displayForm = document.getElementById('displayForm');
+const displayCancel = document.getElementById('displayCancel');
+const displayFinalize = document.getElementById('displayFinalize');
 const db = firebase.database().ref();
+const databaseRoom = firebase.database().ref(joinName);
 
-var name = "default";
+var name;
 var joinName;
 var joinPass;
+var userDisplayName;
 
 // Login
 
@@ -29,8 +34,12 @@ buttonLogin.addEventListener('click', function(e) {
   const emailVal = email.value;
   const passVal = pass.value;
   const auth = firebase.auth();
-
   const promise = auth.signInWithEmailAndPassword(emailVal, passVal);
+  roomService.removeAttribute('hidden');
+  buttonLogout.removeAttribute('hidden');
+  loginForm.setAttribute('hidden', 'loginForm');
+  invalidText.setAttribute('hidden', 'invalidText');
+
   promise.catch(function(e) {
     console.log(e.message);
   });
@@ -43,43 +52,57 @@ buttonSignUp.addEventListener('click', function(e) {
   const passVal = pass.value;
   const auth = firebase.auth();
   if ((emailVal.includes('@') && emailVal.includes('.com'))) {
-    const promise = auth.createUserWithEmailAndPassword(emailVal, passVal);
+    firebase.auth().createUserWithEmailAndPassword(emailVal, passVal)
+      .catch(function(error) {
+        console.log(error);
+      });
+
   } else {
     invalidText.removeAttribute('hidden');
   }
-
-  promise.catch(function(e) {
-    console.log(e.message);
-  });
+  displayNameForm.removeAttribute('hidden');
+  loginForm.setAttribute('hidden', 'loginForm');
 });
+
+displayFinalize.addEventListener('click', function(e) {
+  firebase.auth().currentUser.updateProfile({displayName: document.getElementById('displayForm').value});
+  roomService.removeAttribute('hidden');
+  buttonLogout.removeAttribute('hidden');
+  loginForm.setAttribute('hidden', 'loginForm');
+  invalidText.setAttribute('hidden', 'invalidText');
+  displayNameForm.setAttribute('hidden', 'displayNameForm');
+  console.log(firebase.auth().currentUser);
+})
+
+displayCancel.addEventListener('click', function(e) {
+  var user = firebase.auth().currentUser;
+  roomService.setAttribute('hidden', 'roomService');
+  buttonLogout.setAttribute('hidden', 'buttonLogout');
+  container.setAttribute('hidden', 'container');
+  loginForm.removeAttribute('hidden');
+  displayNameForm.setAttribute('hidden', displayNameForm);
+  if (user) {
+    user.delete();
+  }
+})
 
 // Log out
 
 buttonLogout.addEventListener('click', function(e) {
   firebase.auth().signOut();
+  roomService.setAttribute('hidden', 'roomService');
+  buttonLogout.setAttribute('hidden', 'buttonLogout');
+  container.setAttribute('hidden', 'container');
+  loginForm.removeAttribute('hidden');
 });
 
 logOutInner.addEventListener('click', function(e) {
   firebase.auth().signOut();
+  roomService.setAttribute('hidden', 'roomService');
+  buttonLogout.setAttribute('hidden', 'buttonLogout');
+  container.setAttribute('hidden', 'container');
+  loginForm.removeAttribute('hidden');
 })
-
-// Auth state change
-
-firebase.auth().onAuthStateChanged(function(firebaseUser) {
-  if (firebaseUser) {
-    console.log(firebaseUser);
-    roomService.removeAttribute('hidden');
-    buttonLogout.removeAttribute('hidden');
-    loginForm.setAttribute('hidden', 'loginForm');
-    invalidText.setAttribute('hidden', 'invalidText');
-  } else {
-    console.log("logged out");
-    roomService.setAttribute('hidden', 'roomService');
-    buttonLogout.setAttribute('hidden', 'buttonLogout');
-    container.setAttribute('hidden', 'container');
-    loginForm.removeAttribute('hidden');
-  }
-});
 
 // Back to menu
 
@@ -104,10 +127,18 @@ if (finalizeRoomButton) {
     name = roomName.value;
     var pass = roomPass.value;
     passList = db.child('passwords');
-    passList.child(name).set(pass);
-    container.removeAttribute('hidden');
-    createRoomForm.setAttribute('hidden', 'createRoomForm');
-    chatArea.innerHTML = "";
+    db.once('value', function(snapshot) {
+      if (snapshot.hasChild(name)) {
+        document.getElementById('nameTaken').innerHTML = name + " has been taken. Try something different.";
+        document.getElementById('nameTaken').removeAttribute('hidden');
+      } else {
+        container.removeAttribute('hidden');
+        db.child(name).set(pass);
+        passList.child(name).set(pass);
+        createRoomForm.setAttribute('hidden', 'createRoomForm');
+        chatArea.innerHTML = "Chat";
+       }
+    });
   })
 }
 
@@ -120,6 +151,11 @@ if (joinRoom) {
   })
 }
 
+  backToRoomServiceJoin.addEventListener('click', function(e) {
+    joinForm.setAttribute('hidden', 'joinForm');
+    roomService.removeAttribute('hidden');
+  })
+
 if (finalizeJoin) {
   finalizeJoin.addEventListener('click', function(e) {
     joinName = roomNameJoin.value;
@@ -127,11 +163,12 @@ if (finalizeJoin) {
 
     roomToJoin = firebase.database().ref('passwords');
     roomToJoin.on("value", function(snapShot) {
-    console.log(snapShot.child(joinName).val());
-    
+
+
       if (snapShot.child(joinName).val() == joinPass) {
         alert('after if');
-        roomToJoin.on('value', function(snapshot) {
+      databaseRoom.once('value')
+        .then(function(snapshot) {
             snapshot.forEach(function(childSnap) {
               var p = document.createElement('p');
               chatArea.appendChild(p);
@@ -140,7 +177,7 @@ if (finalizeJoin) {
           });
         container.removeAttribute('hidden');
         joinForm.setAttribute('hidden', 'joinForm');
-	alert('done');
+	      alert('done');
       }
     });
   })

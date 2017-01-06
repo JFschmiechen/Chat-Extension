@@ -20,6 +20,7 @@ var totalMsg = 0;
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     userEmail = user.email;
+    userDisplayName = user.displayName;
   }
 })
 
@@ -41,7 +42,6 @@ var firebaseRef = firebase.database().ref(name);
 }
 
 fieldRef.on('child_added', function(textSnap, id) {
-   id = textSnap.key;
    var div = document.createElement('p'); // creates new p tag in chatbox
    chatArea.appendChild(div);
    div.textContent = userEmail + ": " + textSnap.val().messageText;
