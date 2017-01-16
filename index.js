@@ -9,55 +9,55 @@ firebase.initializeApp(config);
 const mainText = document.getElementById("mainText");
 const returnField = document.getElementById("returnField");
 const sendButton = document.getElementById('sendButton');
-var fieldRef = firebase.database().ref(name);
-
+const fieldRef = firebase.database().ref(name);
 
 var userEmail;
 var timeStamp = firebase.database.ServerValue.TIMESTAMP;
-var count = Object.keys(fieldRef).length;
+var count = 0;
 var totalMsg = 0;
 
 firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
+  if (user != null) {
     userEmail = user.email;
-    userDisplayName = user.displayName;
   }
 })
 
 sendButton.onclick = function() {
-var firebaseRef = firebase.database().ref(name);
-
+  var firebaseRef = firebase.database().ref(name);
+  var user = firebase.auth().currentUser;
+  var currentName;
+  if (user != null) {
+      currentName = firebase.auth().currentUser.displayName;
+  }
   var messageText = mainText.value;
-    firebaseRef.child(totalMsg).set({messageText,
-	    timeStamp,
-      count
-  	});
-    totalMsg++;
-    count = Object.keys(firebaseRef).length;
-  if (count >= 3) {
-    query = firebase.database().ref(name).orderByChild('timeStamp');
-    query.once('value')
-      .then(function(snapshot) {
-      console.log(snapshot);
+  firebaseRef.push({messageText,
+	  currentName
+  }, function(error) {
+    console.log(error);
+  });
+  totalMsg++;
+  query = firebase.database().ref(name)
+  query.on('value', function(snapshot) {
+    count = snapshot.numChildren();
+    if (count >= 3) {
       snapshot.forEach(function(childSnapshot) {
-        console.log(childSnapshot);
-        firebaseRef.child(childSnapshot).remove();
+        query.child(childSnapshot.key).remove();
         return true;
       });
-    });
-  }
+    }
+  });
 }
 
-fieldRef.on('child_added', function(textSnap, id) {
-   var div = document.createElement('p'); // creates new p tag in chatbox
-   chatArea.appendChild(div);
-   console.log(textSnap);
-   div.textContent = userEmail + ": " + textSnap.val().messageText;
+fieldRef.on('child_added', function(textSnap) {
+  var div = document.createElement('p'); // creates new p tag in chatbox
+  chatArea.appendChild(div);
+  div.textContent = textSnap.val().currentName + ": " + textSnap.val().messageText;
+}, function(error) {
+  console.error(error);
 });
 
 fieldRef.on('child_removed', function(textSnap, id) {
-  id = chatArea.firstChild.key;
   chatArea.removeChild(chatArea.firstChild);
 });
 
-// Room Service
+// Room Services
