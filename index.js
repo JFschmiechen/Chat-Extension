@@ -9,34 +9,33 @@ firebase.initializeApp(config);
 const mainText = document.getElementById("mainText");
 const returnField = document.getElementById("returnField");
 const sendButton = document.getElementById('sendButton');
-const fieldRef = firebase.database().ref(name);
-
+var fieldRef = firebase.database().ref(name);
+var test;
 var userEmail;
 var timeStamp = firebase.database.ServerValue.TIMESTAMP;
 var count = 0;
 var totalMsg = 0;
-
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user != null) {
-    userEmail = user.email;
-  }
-})
+var foo = sendButton.onclick;
 
 sendButton.onclick = function() {
+listenerRefresh(name);
   var firebaseRef = firebase.database().ref(name);
-  var user = firebase.auth().currentUser;
+  var userNow = firebase.auth().currentUser;
   var currentName;
-  if (user != null) {
-      currentName = firebase.auth().currentUser.displayName;
+  if (userNow != null) {
+    currentName = firebase.auth().currentUser.displayName;
   }
   var messageText = mainText.value;
-  firebaseRef.push({messageText,
-	  currentName
-  }, function(error) {
-    console.log(error);
-  });
+  //get reference to the child node that you want to append to
+  var newMessage = firebaseRef.push();
+  newMessage.set({
+     'messageText': messageText,
+     'currentName': currentName
+      });
+  console.log("TESTING PUSHING NEW MESSAGE");
+  console.log(newMessage.toString());
   totalMsg++;
-  query = firebase.database().ref(name)
+  query = firebase.database().ref(name);
   query.on('value', function(snapshot) {
     count = snapshot.numChildren();
     if (count >= 3) {
@@ -48,16 +47,15 @@ sendButton.onclick = function() {
   });
 }
 
-fieldRef.on('child_added', function(textSnap) {
-  var div = document.createElement('p'); // creates new p tag in chatbox
-  chatArea.appendChild(div);
-  div.textContent = textSnap.val().currentName + ": " + textSnap.val().messageText;
-}, function(error) {
-  console.error(error);
-});
-
-fieldRef.on('child_removed', function(textSnap, id) {
-  chatArea.removeChild(chatArea.firstChild);
-});
+var joinRefRefresh = function(joinName) {
+  databaseRef = firebase.database().ref(joinName);
+  databaseRef.on('value', function(snapshot) {
+    snapshot.forEach(function(childSnap) {
+      var p = document.createElement('p');
+      chatArea.appendChild(p);
+      p.textContent = childSnap.val().currentName + ": " + childSnap.val().messageText;              
+    });
+  });
+}
 
 // Room Services

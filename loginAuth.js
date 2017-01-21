@@ -23,124 +23,142 @@ const displayFinalize = document.getElementById('displayFinalize');
 const emailAuthRoom = document.getElementById('emailAuthRoom');
 const cancelAuth = document.getElementById('cancelAuth');
 const mainBackToRoomService = document.getElementById('mainBackToRoomService');
-const db = firebase.database().ref();
+const backContainer = document.getElementById('backContainer');
+var db = firebase.database().ref();
 
 var name;
 var joinName;
 var joinPass;
 var userDisplayName;
-//var user = firebase.auth().currentUser;
 
 // Login
 
-buttonLogin.addEventListener('click', function(e) {
-  const emailVal = email.value;
-  const passVal = pass.value;
-  const promise = firebase.auth().signInWithEmailAndPassword(emailVal, passVal);
+if (buttonLogin) {
+  buttonLogin.addEventListener('click', function(e) {
+    const emailVal = email.value;
+    const passVal = pass.value;
+    const promise = firebase.auth().signInWithEmailAndPassword(emailVal, passVal);
 
-  firebase.auth().onAuthStateChanged(function(user) {
-      firebase.auth().currentUser.reload();
-      if (firebase.auth().currentUser.emailVerified) {
-        if (firebase.auth().currentUser.displayName == null) { // No name
-          displayNameForm.removeAttribute('hidden');
-          roomService.setAttribute('hidden', 'roomService');
-          buttonLogout.setAttribute('hidden', 'buttonLogout');
+    firebase.auth().onAuthStateChanged(function() {
+        firebase.auth().currentUser.getToken(true);      
+        if (firebase.auth().currentUser.emailVerified) {
+          if (firebase.auth().currentUser.displayName == null) { // No name
+            displayNameForm.removeAttribute('hidden');
+            roomService.setAttribute('hidden', 'roomService');
+            buttonLogout.setAttribute('hidden', 'buttonLogout');
+            loginForm.setAttribute('hidden', 'loginForm');
+            invalidText.setAttribute('hidden', 'invalidText');
+          } else { // Green light
+            displayNameForm.setAttribute('hidden', 'displayNameForm');
+            roomService.removeAttribute('hidden');
+            loginForm.setAttribute('hidden', 'loginForm');
+            console.log(name);
+            console.log(firebase.auth().currentUser.displayName);
+          }
+        } else { // click here to send another email.
+          emailAuthRoom.removeAttribute('hidden');
           loginForm.setAttribute('hidden', 'loginForm');
-          invalidText.setAttribute('hidden', 'invalidText');
-        } else { // Green light
-
-          displayNameForm.setAttribute('hidden', 'displayNameForm');
-          roomService.removeAttribute('hidden');
-          loginForm.setAttribute('hidden', 'loginForm');
-          console.log(name);
-          console.log(firebase.auth().currentUser.displayName);
         }
-      } else { // click here to send another email.
-        emailAuthRoom.removeAttribute('hidden');
-        loginForm.setAttribute('hidden', 'loginForm');
-      }
-    promise.catch(function(e) {
-      console.log(e.message);
+      promise.catch(function(e) {
+        console.log(e.message);
+      });
     });
   });
-});
+}
 
 // sign up
 
-buttonSignUp.addEventListener('click', function(e) {
-  const emailVal = email.value;
-  const passVal = pass.value;
-  const auth = firebase.auth();
-  if ((emailVal.includes('@') && emailVal.includes('.'))) {
-    firebase.auth().createUserWithEmailAndPassword(emailVal, passVal)
-      .catch(function(error) {
-        console.log(error);
-      });
-  } else {
-    invalidText.removeAttribute('hidden');
-  }
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (!(firebase.auth().currentUser.emailVerified)) {
-      firebase.auth().currentUser.sendEmailVerification().then(function() {
-        loginForm.setAttribute('hidden', 'loginForm');
-        emailAuthRoom.removeAttribute('hidden');
-        console.log("email sent");
-      }, function(error) {
-        console.log(error);
-      });
+if  (buttonSignUp) {
+  buttonSignUp.addEventListener('click', function(e) {
+    const emailVal = email.value;
+    const passVal = pass.value;
+    const auth = firebase.auth();
+    if ((emailVal.includes('@') && emailVal.includes('.'))) {
+      firebase.auth().createUserWithEmailAndPassword(emailVal, passVal)
+        .catch(function(error) {
+          console.log(error);
+        });
+    } else {
+      invalidText.removeAttribute('hidden');
     }
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (!(firebase.auth().currentUser.emailVerified)) {
+        firebase.auth().currentUser.sendEmailVerification().then(function() {
+          loginForm.setAttribute('hidden', 'loginForm');
+          emailAuthRoom.removeAttribute('hidden');
+          console.log("email sent");
+        }, function(error) {
+          console.log(error);
+        });
+      }
+    });
   });
+}
+if (cancelAuth) {
+  cancelAuth.addEventListener('click', function(e) {
+    emailAuthRoom.setAttribute('hidden', 'emailAuthRoom');
+    loginForm.removeAttribute('hidden');
+  });
+}
+
+backContainer.addEventListener('click', function(e) {
+  container.setAttribute('hidden', 'container');
+  roomService.removeAttribute('hidden');
 });
 
-cancelAuth.addEventListener('click', function(e) {
-  emailAuthRoom.setAttribute('hidden', 'emailAuthRoom');
-  loginForm.removeAttribute('hidden');
-});
 
 // Setting username
 
-displayFinalize.addEventListener('click', function(e) {
-  var user = firebase.auth().currentUser;
-  user.updateProfile({
-    displayName: displayForm.value
+if (displayFinalize) {
+  displayFinalize.addEventListener('click', function(e) {
+    var user = firebase.auth().currentUser;
+    user.updateProfile({
+      displayName: displayForm.value
+    });
+    console.log(user);
+    roomService.removeAttribute('hidden');
+    buttonLogout.removeAttribute('hidden');
+    loginForm.setAttribute('hidden', 'loginForm');
+    invalidText.setAttribute('hidden', 'invalidText');
+    displayNameForm.setAttribute('hidden', 'displayNameForm');
   });
-  console.log(user);
-  roomService.removeAttribute('hidden');
-  buttonLogout.removeAttribute('hidden');
-  loginForm.setAttribute('hidden', 'loginForm');
-  invalidText.setAttribute('hidden', 'invalidText');
-  displayNameForm.setAttribute('hidden', 'displayNameForm');
-});
+}
 
-displayCancel.addEventListener('click', function(e) {
-  var user = firebase.auth().currentUser;
-  roomService.setAttribute('hidden', 'roomService');
-  buttonLogout.setAttribute('hidden', 'buttonLogout');
-  container.setAttribute('hidden', 'container');
-  loginForm.removeAttribute('hidden');
-  displayNameForm.setAttribute('hidden', displayNameForm);
-  if (user) {
-    user.delete();
-  }
-});
+if (displayCancel) {
+  displayCancel.addEventListener('click', function(e) {
+    var user = firebase.auth().currentUser;
+    roomService.setAttribute('hidden', 'roomService');
+    buttonLogout.setAttribute('hidden', 'buttonLogout');
+    container.setAttribute('hidden', 'container');
+    loginForm.removeAttribute('hidden');
+    displayNameForm.setAttribute('hidden', displayNameForm);
+    if (user) {
+      user.delete();
+    }
+  });
+}
 
 // Log out
 
-buttonLogout.addEventListener('click', function(e) {
-  firebase.auth().signOut();
-  roomService.setAttribute('hidden', 'roomService');
-  buttonLogout.setAttribute('hidden', 'buttonLogout');
-  container.setAttribute('hidden', 'container');
-  loginForm.removeAttribute('hidden');
-});
+if (buttonLogout) {
+  buttonLogout.addEventListener('click', function(e) {
+    firebase.auth().signOut();
+    roomService.setAttribute('hidden', 'roomService');
+    buttonLogout.setAttribute('hidden', 'buttonLogout');
+    container.setAttribute('hidden', 'container');
+    loginForm.removeAttribute('hidden');
+  });
+}
 
-logOutInner.addEventListener('click', function(e) {
-  firebase.auth().signOut();
-  roomService.setAttribute('hidden', 'roomService');
-  buttonLogout.setAttribute('hidden', 'buttonLogout');
-  container.setAttribute('hidden', 'container');
-  loginForm.removeAttribute('hidden');
-});
+if (logOutInner) {
+  logOutInner.addEventListener('click', function(e) {
+    firebase.auth().signOut();
+    roomService.setAttribute('hidden', 'roomService');
+    buttonLogout.setAttribute('hidden', 'buttonLogout');
+    container.setAttribute('hidden', 'container');
+    loginForm.removeAttribute('hidden');
+  });
+}
 
 // Back to menu
 
@@ -167,6 +185,21 @@ if (createButton) {
   });
 }
 
+var listenerRefresh = function(name) {
+  if (listenerRefresh.done) return;
+
+    fieldRef = firebase.database().ref(name);
+    fieldRef.on('child_added', function(snap) {
+      var div = document.createElement('p'); // creates new p tag in chatbox
+      chatArea.appendChild(div);
+      div.textContent = snap.val().currentName + ": " + snap.val().messageText; 
+    });
+    fieldRef.on('child_removed', function(snapGone) {
+      chatArea.removeChild(chatArea.firstChild);
+    });
+  listenerRefresh.done = true;
+}
+
 if (finalizeRoomButton) {
   finalizeRoomButton.addEventListener('click', function(e) {
     name = roomName.value;
@@ -185,7 +218,7 @@ if (finalizeRoomButton) {
       }
     });
   });
-};
+}
 
 // Join room
 
@@ -208,22 +241,16 @@ if (finalizeJoin) {
     name = roomNameJoin.value;
     joinPass = roomPassJoin.value;
 
+    listenerRefresh.done = false;
     roomToJoin = firebase.database().ref('passwords');
     roomToJoin.on("value", function(snapShot) {
 
 
     if (snapShot.child(name).val() == joinPass) {
-      fieldRef.once('value')
-        .then(function(snapshot) {
-            snapshot.forEach(function(childSnap) {
-              var p = document.createElement('p');
-              chatArea.appendChild(p);
-              p.textContent = childSnap.val().messageText;
-            });
-          });
         container.removeAttribute('hidden');
         joinForm.setAttribute('hidden', 'joinForm');
-	      //mainText.value = '';
+	mainText.value = '';
+        chatArea.innerHTML = '';
       }
     });
   });
