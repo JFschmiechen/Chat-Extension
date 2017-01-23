@@ -9,6 +9,7 @@ firebase.initializeApp(config);
 chrome.browserAction.onClicked.addListener(function(e) {
   window.open(chrome.extension.getURL("index.html"),"gc-popout-window","width =200,height=320")
 });
+
 const mainText = document.getElementById("mainText");
 const returnField = document.getElementById("returnField");
 const sendButton = document.getElementById('sendButton');
@@ -18,8 +19,10 @@ var listenerRefresh = function(name) {
   if (listenerRefresh.done) return;
 
     fieldRef = firebase.database().ref(name);
-    fieldRef.limitToLast(5).on('child_added', function(snap) {
+    fieldRef.limitToLast(7).on('child_added', function(snap) {
       var div = document.createElement('p'); // creates new p tag in chatbox
+      if (snap.val().currentName == firebase.auth().currentUser.displayName) {
+        div.style.position = 'right';
       chatArea.appendChild(div);
       div.textContent = snap.val().currentName + ": " + snap.val().messageText;
     });
@@ -46,7 +49,7 @@ sendButton.onclick = function() {
   query = firebase.database().ref(name);
   query.on('value', function(snapshot) {
     count = snapshot.numChildren();
-    if (count >= 6) {
+    if (count >= 7) {
       snapshot.forEach(function(childSnapshot) {
         query.child(childSnapshot.key).remove();
         return true;
@@ -54,3 +57,5 @@ sendButton.onclick = function() {
     }
   });
 }
+
+

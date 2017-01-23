@@ -1,25 +1,58 @@
+html, body {
+  height: 320px;
+  width: 200px;
+  margin: 0px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background-color: #435164
+}
+
+#container {
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden; 
+}
 
 #chatArea {
-  max-height: 220px;
-  min-height: 220px;
-  min-width: 170px;
-  max-width: 170px;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  overflow: hidden;
+  border-radius: 10px;
+  height: 200px;
+  width: 175px;
+  min-height: 200px;
+  max-width: 184px;
+  overflow: scroll;
   word-wrap: break-word;
-  display: table-cell;;
-  vertical-align: bottom;
+  background-color: white;
+  overflow-x: hidden;
+  margin: 5px;
 }
 
 #textfield {
-  position: fixed;
+  position: relative;
+  down: 90px;
+}
+
+#mainText {
+  width: 168px;
+  margin-left: 5px;
+  border-radius: 10px;
+}
+
+#sendButton {
+  margin-left: 5px;
+  border-radius:5px;
 }
 
 #logOut {
-  position: relative;
+  border-radius: 5px
 }
 
-#backContainer {
-  position: relative;
+#backContainer {  
+  border-radius: 5px;
 }
+
+#chatArea::-webkit-scrollbar-track-piece:no-button {
+  border-radius: 5px;
+}
+
+
+
