@@ -40,7 +40,7 @@ if (buttonLogin) {
     const promise = firebase.auth().signInWithEmailAndPassword(emailVal, passVal);
 
     firebase.auth().onAuthStateChanged(function() {
-        firebase.auth().currentUser.getToken(true);      
+        firebase.auth().currentUser.getToken(true);
         if (firebase.auth().currentUser.emailVerified) {
           if (firebase.auth().currentUser.displayName == null) { // No name
             displayNameForm.removeAttribute('hidden');
@@ -185,21 +185,6 @@ if (createButton) {
   });
 }
 
-var listenerRefresh = function(name) {
-  if (listenerRefresh.done) return;
-
-    fieldRef = firebase.database().ref(name);
-    fieldRef.on('child_added', function(snap) {
-      var div = document.createElement('p'); // creates new p tag in chatbox
-      chatArea.appendChild(div);
-      div.textContent = snap.val().currentName + ": " + snap.val().messageText; 
-    });
-    fieldRef.on('child_removed', function(snapGone) {
-      chatArea.removeChild(chatArea.firstChild);
-    });
-  listenerRefresh.done = true;
-}
-
 if (finalizeRoomButton) {
   finalizeRoomButton.addEventListener('click', function(e) {
     name = roomName.value;
@@ -215,6 +200,7 @@ if (finalizeRoomButton) {
         passList.child(name).set(pass);
         createRoomForm.setAttribute('hidden', 'createRoomForm');
         chatArea.innerHTML = 'Chat';
+        listenerRefresh.done = false;
       }
     });
   });
@@ -240,7 +226,7 @@ if (finalizeJoin) {
   finalizeJoin.addEventListener('click', function(e) {
     name = roomNameJoin.value;
     joinPass = roomPassJoin.value;
-
+    fieldRef.off();
     listenerRefresh.done = false;
     roomToJoin = firebase.database().ref('passwords');
     roomToJoin.on("value", function(snapShot) {
@@ -249,9 +235,20 @@ if (finalizeJoin) {
     if (snapShot.child(name).val() == joinPass) {
         container.removeAttribute('hidden');
         joinForm.setAttribute('hidden', 'joinForm');
-	mainText.value = '';
-        chatArea.innerHTML = '';
+	      mainText.value = '';
+        chatArea.innerHTML = 'Chat';
       }
     });
   });
 }
+
+textfield.addEventListener('keypress', function(e) {
+  if (e.keyCode != 13) {
+    return;
+  } else {
+    e.preventDefault();
+    sendButton.click();
+    mainText.value = '';
+  }
+  return false;
+})

@@ -9,12 +9,12 @@
   "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://auth.firebase.com https://www.gstatic.com/firebasejs/3.6.2/firebase.js https://chatapp-7fa59.firebaseio.com https://chatapp-7fa59.firebaseapp.com https://chatapp-7fa59.appspot.com; object-src 'self'",
 
   "browser_action": {
-    "default_popup": "index.html"
+    
   },
 
   "background": {
-  "page": "index.html",
-  "persistent": true
-}
+    "page": "index.html",
+    "persistent": true
+  }
 
 }

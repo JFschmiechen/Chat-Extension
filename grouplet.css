@@ -1,0 +1,25 @@
+
+#chatArea {
+  max-height: 220px;
+  min-height: 220px;
+  min-width: 170px;
+  max-width: 170px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  overflow: hidden;
+  word-wrap: break-word;
+  display: table-cell;;
+  vertical-align: bottom;
+}
+
+#textfield {
+  position: fixed;
+}
+
+#logOut {
+  position: relative;
+}
+
+#backContainer {
+  position: relative;
+}
