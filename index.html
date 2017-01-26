@@ -5,8 +5,11 @@
   </head>
   <body>
     <div id = "loginForm">
-      <textarea id = "emailField" placeholder = "Email"></textarea>
-      <textarea id = "passField" placeholder = "Password"></textarea>
+      <div id = "imageContainer">
+        <img src = "JFlogo.png" id = "myLogo" alt = "Logo">
+      </div>
+      <input id = "emailField" placeholder = "Email"></textarea>
+      <input id = "passField" placeholder = "Password" type = "password">
       <button id = "login">Login</button>
       <p id = 'invalidEmail' hidden>Invalid email entered</p>
       <button id = "signUp">Sign up</button>
@@ -17,7 +20,6 @@
       <button id = 'displayFinalize'>Thank You</button>
     </div>
     <div id = "container" hidden>
-      
       <div id = "chatArea">
         <p id = "returnField">Chat</p>
       </div>

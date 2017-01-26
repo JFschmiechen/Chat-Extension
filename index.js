@@ -21,8 +21,7 @@ var listenerRefresh = function(name) {
     fieldRef = firebase.database().ref(name);
     fieldRef.limitToLast(7).on('child_added', function(snap) {
       var div = document.createElement('p'); // creates new p tag in chatbox
-      if (snap.val().currentName == firebase.auth().currentUser.displayName) {
-        div.style.position = 'right';
+      
       chatArea.appendChild(div);
       div.textContent = snap.val().currentName + ": " + snap.val().messageText;
     });
@@ -57,5 +56,3 @@ sendButton.onclick = function() {
     }
   });
 }
-
-

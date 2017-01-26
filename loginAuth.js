@@ -39,8 +39,7 @@ if (buttonLogin) {
     const passVal = pass.value;
     const promise = firebase.auth().signInWithEmailAndPassword(emailVal, passVal);
 
-    firebase.auth().onAuthStateChanged(function() {
-        firebase.auth().currentUser.getToken(true);
+       if (firebase.auth().currentUser != null) {
         if (firebase.auth().currentUser.emailVerified) {
           if (firebase.auth().currentUser.displayName == null) { // No name
             displayNameForm.removeAttribute('hidden');
@@ -62,7 +61,7 @@ if (buttonLogin) {
       promise.catch(function(e) {
         console.log(e.message);
       });
-    });
+    }
   });
 }
 
@@ -147,6 +146,8 @@ if (buttonLogout) {
     buttonLogout.setAttribute('hidden', 'buttonLogout');
     container.setAttribute('hidden', 'container');
     loginForm.removeAttribute('hidden');
+    emailField.value = '';
+    passField.value = '';
   });
 }
 
@@ -157,6 +158,8 @@ if (logOutInner) {
     buttonLogout.setAttribute('hidden', 'buttonLogout');
     container.setAttribute('hidden', 'container');
     loginForm.removeAttribute('hidden');
+    emailField.value = '';
+    passField.value = '';
   });
 }
 

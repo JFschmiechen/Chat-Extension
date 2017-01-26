@@ -4,13 +4,13 @@ html, body {
   margin: 0px;
   overflow-x: hidden;
   overflow-y: hidden;
-  background-color: #435164
+  background-color: #1d3168;
 }
 
 #container {
   min-height: 100%;
   overflow-x: hidden;
-  overflow-y: hidden; 
+  overflow-y: hidden;
 }
 
 #chatArea {
@@ -26,12 +26,70 @@ html, body {
   margin: 5px;
 }
 
-#textfield {
-  position: relative;
-  down: 90px;
+#loginForm {
+
 }
 
+#imageContainer {
+  border-radius: 5px;
+  background-color: #121b33;
+  display: block;
+  margin: 0px 22px 0px 7px;
+  border: none;
+}
+
+#myLogo {
+  width: 140px;
+  height: 140px;
+  margin: 5px 0px 5px 15px;
+  display: block;
+}
+
+#emailField {
+  border: none;
+  border-radius: 4px;
+  resize: none;
+  margin: 5px 0px 0px 7px;
+  height: 30px;
+  width: 166px;
+  padding-left: 5px;
+  background-color: #d6e5ff;
+}
+
+#passField {
+  border: none;
+  border-radius: 4px;
+  resize: none;
+  margin: 3px 0px 5px 7px;
+  height: 30px;
+  width: 166px;
+  padding-left: 5px;
+  background-color: #d6e5ff;
+}
+
+#login {
+  text-decoration: none;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  background-color: #d6e5ff;
+  padding: 10px 24px;
+  margin-left: 5px;
+  margin-top: 5px;
+}
+
+#signUp {
+  padding: 10px 24px;
+  text-decoration: none;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  background-color: orange;
+}
+
+
 #mainText {
+  resize: none;
   width: 168px;
   margin-left: 5px;
   border-radius: 10px;
@@ -46,13 +104,6 @@ html, body {
   border-radius: 5px
 }
 
-#backContainer {  
+#backContainer {
   border-radius: 5px;
 }
-
-#chatArea::-webkit-scrollbar-track-piece:no-button {
-  border-radius: 5px;
-}
-
-
-

@@ -2,19 +2,24 @@
   "manifest_version": 2,
 
   "homepage_url": "https://chatapp-7fa59.firebaseapp.com/",
-  "name": "Getting started example",
+  "name": "JFchat",
   "description": "This extension will allow communication through a browser extension",
   "version": "1.0",
 
   "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://auth.firebase.com https://www.gstatic.com/firebasejs/3.6.2/firebase.js https://chatapp-7fa59.firebaseio.com https://chatapp-7fa59.firebaseapp.com https://chatapp-7fa59.appspot.com; object-src 'self'",
 
   "browser_action": {
-    
+
   },
 
   "background": {
     "page": "index.html",
     "persistent": true
+  },
+
+  "icons": {
+    "16": "logo16.png",
+    "128": "JFlogo.png"
   }
 
 }
